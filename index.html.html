@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balik — A Returning Doctor's Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3ECDC;
+    --paper-dark:#EAE0CB;
+    --card:#FBF7EE;
+    --ink:#1E2A28;
+    --ink-soft:#3D4A47;
+    --teal:#0E4B43;
+    --teal-deep:#0A3530;
+    --red:#A8311F;
+    --gold:#C99A3D;
+    --sage:#B9C4AE;
+    --line: rgba(30,42,40,0.18);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  a{color:var(--teal-deep);}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px;}
+
+  /* texture */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(30,42,40,0.05) 1px, transparent 0);
+    background-size:18px 18px;
+    pointer-events:none;
+    z-index:0;
+  }
+  .wrap, header, footer { position:relative; z-index:1; }
+
+  /* ---------- HERO / BOARDING PASS ---------- */
+  .hero{
+    padding:56px 24px 0;
+    max-width:920px;
+    margin:0 auto;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:14px;
+  }
+  .pass{
+    display:grid;
+    grid-template-columns: 1fr 200px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    box-shadow:0 1px 0 rgba(0,0,0,.04), 0 18px 40px -24px rgba(14,75,67,.35);
+    overflow:hidden;
+  }
+  .pass-main{
+    padding:36px 36px 30px;
+    border-right:none;
+  }
+  h1.title{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(34px,5vw,52px);
+    line-height:1.04;
+    margin:0 0 10px;
+    color:var(--teal-deep);
+  }
+  h1.title em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--red);
+  }
+  .subtitle{
+    max-width:480px;
+    color:var(--ink-soft);
+    font-size:16.5px;
+    margin:0 0 26px;
+  }
+  .route{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .route b{color:var(--teal-deep); font-size:20px; letter-spacing:.04em;}
+  .route svg{flex:1; min-width:80px; max-width:220px; height:18px; color:var(--gold);}
+  .pass-stub{
+    background:var(--paper-dark);
+    border-left:2px dashed var(--ink-soft);
+    padding:30px 22px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    position:relative;
+  }
+  .pass-stub::before, .pass-stub::after{
+    content:"";
+    position:absolute;
+    left:-11px;
+    width:22px;height:22px;
+    background:var(--paper);
+    border-radius:50%;
+    border:1px solid var(--line);
+  }
+  .pass-stub::before{top:-11px;}
+  .pass-stub::after{bottom:-11px;}
+  .stub-row{margin-bottom:14px;}
+  .stub-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    opacity:.75;
+    display:block;
+    margin-bottom:2px;
+  }
+  .stub-value{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:14px;
+    font-weight:600;
+    color:var(--teal-deep);
+  }
+  .stub-stamp{
+    align-self:flex-start;
+    border:2px solid var(--red);
+    color:var(--red);
+    border-radius:50%;
+    width:64px;height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    font-weight:700;
+    letter-spacing:.06em;
+    transform:rotate(-12deg);
+    line-height:1.15;
+    opacity:.85;
+  }
+  @media (max-width:640px){
+    .pass{grid-template-columns:1fr;}
+    .pass-stub{border-left:none; border-top:2px dashed var(--ink-soft);}
+    .pass-stub::before, .pass-stub::after{left:50%; top:-11px; transform:translateX(-50%);}
+    .pass-stub::after{bottom:-11px; top:auto;}
+  }
+
+  /* ---------- NAV ---------- */
+  nav.jump{
+    margin:34px auto 0;
+    max-width:920px;
+    padding:0 24px;
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  nav.jump::-webkit-scrollbar{display:none;}
+  nav.jump a{
+    flex:0 0 auto;
+    text-decoration:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.03em;
+    color:var(--teal-deep);
+    background:var(--card);
+    border:1px solid var(--line);
+    padding:8px 14px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  nav.jump a:hover{ background:var(--teal); color:var(--paper); border-color:var(--teal);}
+
+  /* ---------- JOURNEY OVERVIEW ---------- */
+  .journey{ padding:56px 0 8px; }
+  .journey h2.kicker, .section h2.kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin:0 0 8px;
+  }
+  .journey h2.big, .section h2.big{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(24px,3.4vw,32px);
+    color:var(--teal-deep);
+    margin:0 0 20px;
+  }
+  .stops{
+    list-style:none;
+    margin:0;padding:0;
+    border-left:2px solid var(--line);
+    padding-left:0;
+  }
+  .stops li{
+    position:relative;
+    padding:0 0 30px 38px;
+  }
+  .stops li:last-child{padding-bottom:0;}
+  .stops li::before{
+    content:attr(data-n);
+    position:absolute;
+    left:-17px; top:0;
+    width:32px;height:32px;
+    background:var(--teal);
+    color:var(--paper);
+    border-radius:50%;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stops a{ text-decoration:none; color:inherit; }
+  .stops h3{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:600;
+    margin:2px 0 4px;
+    color:var(--teal-deep);
+  }
+  .stops p{ margin:0; color:var(--ink-soft); font-size:14.5px; }
+  .stops li:hover h3{ color:var(--red); }
+
+  /* ---------- SECTIONS / PARTS ---------- */
+  .section{ padding:64px 0 8px; scroll-margin-top:20px; }
+  .part-bar{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    margin-bottom:6px;
+  }
+  .part-no{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--paper);
+    background:var(--teal-deep);
+    padding:3px 9px;
+    border-radius:3px;
+    letter-spacing:.05em;
+  }
+  .timeframe{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    background:var(--paper-dark);
+    border:1px solid var(--line);
+    padding:3px 9px;
+    border-radius:3px;
+    margin-left:auto;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:28px 28px 22px;
+    margin-bottom:18px;
+  }
+  .card h3{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:600;
+    color:var(--teal-deep);
+    margin:0 0 10px;
+  }
+  .card p{ margin:0 0 12px; color:var(--ink-soft); }
+  .card p:last-child{margin-bottom:0;}
+  .card ul, .card ol{ margin:0 0 12px; padding-left:20px; color:var(--ink-soft); }
+  .card li{margin-bottom:6px;}
+  .card li:last-child{margin-bottom:0;}
+  .card strong{color:var(--ink);}
+  .tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.04em;
+    color:var(--teal-deep);
+    background:rgba(14,75,67,.08);
+    border:1px solid rgba(14,75,67,.25);
+    padding:2px 8px;
+    border-radius:3px;
+    margin:0 6px 6px 0;
+  }
+  .note{
+    border-left:3px solid var(--gold);
+    background:rgba(201,154,61,.10);
+    padding:12px 16px;
+    border-radius:0 4px 4px 0;
+    font-size:14.5px;
+    color:var(--ink-soft);
+    margin-top:14px;
+  }
+  .note strong{color:var(--ink);}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:680px){ .grid2{grid-template-columns:1fr;} }
+
+  /* ---------- CHECKLIST ---------- */
+  .checklist-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:18px;
+  }
+  .progress-pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--teal-deep);
+    background:var(--paper-dark);
+    border:1px solid var(--line);
+    padding:7px 14px;
+    border-radius:999px;
+  }
+  .progress-pill b{color:var(--red);}
+  .check-group{margin-bottom:20px;}
+  .check-group h4{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 10px;
+    padding-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+  .check-item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:9px 4px;
+    cursor:pointer;
+    border-radius:4px;
+  }
+  .check-item:hover{ background:rgba(14,75,67,.05); }
+  .stamp-box{
+    flex:0 0 auto;
+    width:26px;height:26px;
+    border:2px dashed var(--ink-soft);
+    border-radius:50%;
+    position:relative;
+    margin-top:1px;
+    transition:all .15s ease;
+  }
+  .check-item input{position:absolute; opacity:0; width:26px; height:26px; cursor:pointer; margin:0;}
+  .check-item.checked .stamp-box{
+    border:2px solid var(--red);
+    background:rgba(168,49,31,.08);
+  }
+  .check-item.checked .stamp-box::after{
+    content:"✓";
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--red);
+    font-size:14px;
+    font-weight:700;
+  }
+  .check-text{font-size:14.5px; color:var(--ink-soft);}
+  .check-item.checked .check-text{ color:var(--ink); text-decoration:line-through; text-decoration-color:rgba(168,49,31,.4); }
+
+  /* ---------- RESOURCES ---------- */
+  .res-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+  @media (max-width:640px){ .res-grid{grid-template-columns:1fr;} }
+  .res-card{
+    border:1px solid var(--line);
+    background:var(--card);
+    border-radius:6px;
+    padding:16px 18px;
+    text-decoration:none;
+    display:block;
+  }
+  .res-card:hover{border-color:var(--teal);}
+  .res-card .res-name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    color:var(--teal-deep);
+    font-size:16px;
+    display:block;
+    margin-bottom:3px;
+  }
+  .res-card .res-desc{ font-size:13px; color:var(--ink-soft); }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    margin-top:70px;
+    border-top:1px solid var(--line);
+    padding:30px 0 60px;
+  }
+  footer .disclaimer{
+    font-size:13px;
+    color:var(--ink-soft);
+    max-width:680px;
+  }
+  footer .signoff{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:18px;
+    opacity:.8;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">A shared resource, by and for Malaysian doctors abroad</div>
+  <div class="pass">
+    <div class="pass-main">
+      <h1 class="title">Coming <em>balik.</em></h1>
+      <p class="subtitle">A practical guide to the paperwork, registration, job search and logistics of moving your medical career from the UK back to Malaysia.</p>
+      <div class="route">
+        <b>UK</b>
+        <svg viewBox="0 0 220 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="2" y1="9" x2="208" y2="9" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 5"/>
+          <path d="M208 9L198 4V8L188 9.5L198 11V15L208 9Z" fill="currentColor"/>
+        </svg>
+        <b>MY</b>
+      </div>
+    </div>
+    <div class="pass-stub">
+      <div>
+        <div class="stub-row">
+          <span class="stub-label">Status</span>
+          <span class="stub-value">Planning return</span>
+        </div>
+        <div class="stub-row">
+          <span class="stub-label">Requires</span>
+          <span class="stub-value">MMC · NSR · REP</span>
+        </div>
+      </div>
+      <div class="stub-stamp">VERIFY<br>BEFORE<br>FILING</div>
+    </div>
+  </div>
+</div>
+
+<nav class="jump">
+  <a href="#registration">01 Registration</a>
+  <a href="#rep">02 REP</a>
+  <a href="#jobs">03 Job search</a>
+  <a href="#family">04 Family</a>
+  <a href="#touchdown">05 Touchdown</a>
+  <a href="#checklist">Checklist</a>
+  <a href="#resources">Resources</a>
+</nav>
+
+<div class="wrap">
+
+  <section class="journey">
+    <h2 class="kicker">The route</h2>
+    <h2 class="big">Five stops between a UK contract and a Malaysian one</h2>
+    <ul class="stops">
+      <li data-n="1"><a href="#registration"><h3>Get registered — MMC &amp; NSR</h3><p>Sort out your basic and specialist registration before anything else depends on it.</p></a></li>
+      <li data-n="2"><a href="#rep"><h3>Apply for the Returning Expert Programme</h3><p>Must be filed while you're still abroad — this is the one with a hard deadline.</p></a></li>
+      <li data-n="3"><a href="#jobs"><h3>Start the job search</h3><p>Public, private, locum — each has a different timeline and a different door to knock on.</p></a></li>
+      <li data-n="4"><a href="#family"><h3>Sort family &amp; logistics</h3><p>Schools, spouse status, shipping a life back across two hemispheres.</p></a></li>
+      <li data-n="5"><a href="#touchdown"><h3>Touchdown — the first 90 days</h3><p>What actually needs doing once your feet are back on the ground.</p></a></li>
+    </ul>
+  </section>
+
+  <section class="section" id="registration">
+    <div class="part-bar">
+      <span class="part-no">PART 01</span>
+      <span class="timeframe">start 9–12 months out</span>
+    </div>
+    <h2 class="kicker">Paperwork</h2>
+    <h2 class="big">Registration — MMC &amp; the National Specialist Register</h2>
+
+    <div class="card">
+      <h3>MMC: full registration &amp; your APC</h3>
+      <p>If you did housemanship in Malaysia before going to the UK, you'll already hold MMC registration — but it's likely lapsed or dormant if you haven't held an <strong>Annual Practising Certificate (APC)</strong> while abroad. The APC is what actually allows you to practise; registration alone doesn't.</p>
+      <ul>
+        <li>To resume practising, you'll renew or reactivate your APC through MMC's MeRITS system.</li>
+        <li>If you need <strong>full registration without conditions</strong> (for unsupervised or private practice) and don't already hold it, you'll need certified copies of your degree, identity documents, and a current <strong>Certificate of Good Standing / Letter of Good Standing</strong> from the GMC confirming your UK registration history.</li>
+        <li>Credential verification runs through one of two services MMC has appointed: <strong>EPIC</strong> (via ECFMG/Intealth) or <strong>DataFlow</strong> (TrueProfile.io). Start this early — it has its own processing time before MMC even looks at your file.</li>
+      </ul>
+      <div class="note"><strong>CPD continuity matters more than people expect.</strong> Your UK appraisal and CPD records (RCPCH revalidation evidence, for instance) can be carried over to a Malaysian CPD points administrator (MMA, MOH, or AMM systems) and fed into MeRITS — so keep your UK CPD documentation organised before you leave, rather than trying to reconstruct it later. If you've had a genuine career break, a reduction in required CPD points can be requested rather than waived entirely.</div>
+      <div class="note"><strong>Apply for your APC early.</strong> MMC has flagged unusually high APC application volumes in recent cycles, with processing slower than usual — payment made ahead of the deadline avoids late penalties even if approval itself takes a while.</div>
+    </div>
+
+    <div class="card">
+      <h3>The idiot's guide — one doctor's actual walkthrough</h3>
+      <span class="tag">First-hand account</span>
+      <p>The official version above tells you what's required. This is what it actually looks like in practice, from a UK graduate who's been through it. Your medical school, specialty, or year may shift the details slightly — but the shape of it holds.</p>
+      <ol>
+        <li><strong>Verify your medical degree through EPIC.</strong>
+          <ul>
+            <li>Create an account on the <a href="https://www.ecfmgepic.org/instructions-malaysia.html" target="_blank" rel="noopener">EPIC portal</a> — this is itself an application, not an instant signup. You'll need a colour photo of your face, a colour scan of your passport photo page, your medical degree details, and a £90 fee paid online.</li>
+            <li>Once approved, EPIC (now branded MyIntealth) emails you login details. Your EPIC Identification Form (EIF) sits under "My Identity Documents" as a downloadable file.</li>
+            <li>The EIF then has to be notarised — specifically through <a href="https://www.notarycam.com/ecfmg/" target="_blank" rel="noopener">NotaryCam</a>, a US-based online notary service, not a local one. Select the EIF on their order form, upload the PDF EIF plus your passport, and provide your EPIC ID (found under "My Profile").</li>
+            <li>Booking an appointment slot is the fiddly part: the calendar looks emptier than it really is, and the first slot that actually works might be two weeks out. Click around rather than assuming nothing's free.</li>
+            <li>At the appointment you'll video-call a notary in the US and electronically co-sign the EIF together. NotaryCam forwards it to ECFMG, who process it within roughly 5 business days.</li>
+            <li>Then upload your basic medical degree under "My Credentials," making sure you select <strong>MMC</strong> as the recipient of the EPIC report.</li>
+            <li>Each credential verification costs $100. If your medical school requires a separate transcript request — Newcastle graduates, for instance, needed one for an extra £25 — get that requested and paid for <em>before</em> finalising the $100 verification payment, not after.</li>
+          </ul>
+        </li>
+        <li><strong>Create your MeRITS account.</strong>
+          <ul>
+            <li>Register at <a href="https://merits.mmc.gov.my/" target="_blank" rel="noopener">merits.mmc.gov.my</a> via the "Register" link, top right.</li>
+            <li>Choose your identification type — Malaysian IC holders select "New Identification Card" and enter their IC number — then follow the on-screen steps.</li>
+          </ul>
+        </li>
+        <li><strong>Gather your documents — they go to two different places.</strong>
+          <div class="check-group" style="margin-top:14px;">
+            <h4>Upload directly to MeRITS</h4>
+            <label class="check-item" data-id="doc-merits-degree"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Certified true copy of your basic medical degree</span></label>
+            <label class="check-item" data-id="doc-merits-form7"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Form 7</span></label>
+            <label class="check-item" data-id="doc-merits-birth"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Certified true copy of your birth certificate</span></label>
+            <label class="check-item" data-id="doc-merits-ic"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Certified true copy of your IC</span></label>
+            <label class="check-item" data-id="doc-merits-spm"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Certified true copy of your SPM / O-Level / A-Level certificate</span></label>
+          </div>
+          <p style="font-size:13.5px; color:var(--ink-soft); margin:4px 0 16px;">For every other document the portal asks for that isn't on this list, a blank PDF satisfied the requirement — it wasn't actually needed.</p>
+
+          <div class="check-group">
+            <h4>Email separately to MMC — ecpmq@mmc.gov.my</h4>
+            <label class="check-item" data-id="doc-email-cv"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">CV covering work experience only</span></label>
+            <label class="check-item" data-id="doc-email-testimonials"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Certified testimonials covering your last three years of work</span></label>
+            <label class="check-item" data-id="doc-email-postgrad"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Certified postgraduate degree, if you have one</span></label>
+            <label class="check-item" data-id="doc-email-housemanship"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Certified proof of housemanship with postings specified (Certificate of Completion of the Foundation Programme)</span></label>
+            <label class="check-item" data-id="doc-email-gmc"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Certified copy of your GMC registration</span></label>
+            <label class="check-item" data-id="doc-email-logs"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Letter of Good Standing from the GMC</span></label>
+            <label class="check-item" data-id="doc-email-psv"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">PSV report requested through MyIntealth</span></label>
+          </div>
+          <p style="font-size:13.5px; color:var(--ink-soft); margin:4px 0 0;">Ask the GMC to send the Letter of Good Standing directly to MMC, and attach a screenshot of your GMC register entry as backup. The PSV report comes with its own separate fee.</p>
+        </li>
+      </ol>
+      <div class="note"><strong>Budget more time than the official estimates suggest.</strong> It took roughly four weeks from uploading documents to EPIC actually getting the verification report through to MMC — and that's before MMC's own processing starts.</div>
+      <div class="note"><strong>On "certified true copy":</strong> a Malaysian government medical officer stamping and signing the copy worked fine as certification — you don't need a solicitor or commissioner of oaths for this.</div>
+      <p>This is one route through it. If your medical school, specialty, or postgraduate pathway took a different shape, it's worth adding your own version alongside this one — a single data point becomes far more useful once a few more sit next to it.</p>
+    </div>
+
+    <div class="card">
+      <h3>NSR: registering as a specialist</h3>
+      <p>This is the one that's easy to underestimate. Under the Medical Act 1971, you cannot legally use a specialist title or work as a consultant — public or private — without being entered on the <strong>National Specialist Register (NSR)</strong>, even with a full Royal College qualification behind you.</p>
+      <ul>
+        <li>UK training routes (e.g. CCT plus the relevant Royal College membership/fellowship) are among the postgraduate pathways NSR generally recognises, but check your specific specialty's list of registrable qualifications and accepted training institutions — the bar varies by specialty.</li>
+        <li>You'll need the original postgraduate training certificate (not just a verification letter — NSR explicitly doesn't accept those alone), plus two referee reports from specialists in your field with five or more years standing.</li>
+        <li>Your file goes to a Specialty Subcommittee, then the Evaluation Committee for Specialist Medical Qualifications. If you've never practised in Malaysia, an interview is common, and the committee can ask for a supervised attachment period in a MOH hospital before confirming full specialist status.</li>
+        <li>Average processing is quoted as 3–4 months, longer for overseas-trained applicants. Registration is valid for five years and costs RM1,500.</li>
+      </ul>
+      <div class="note"><strong>Worth knowing:</strong> you can submit your MMC full registration and NSR specialist applications concurrently rather than waiting for one to clear before starting the other.</div>
+      <div class="note"><strong>Update, September 2025:</strong> MMC approved new evaluation guidelines that broaden what counts as a "recognised" qualification for specialist registration, part of wider reforms under the 2024 Medical Act amendment — credentials that were previously excluded are now assessed through a more transparent comparability evaluation. Cardiothoracic surgeons holding the FRCS, for instance, were explicitly cleared for formal registration as part of this update. If you were put off by older, stricter guidance, it's worth checking whether your qualification's status has changed.</div>
+    </div>
+  </section>
+
+  <section class="section" id="rep">
+    <div class="part-bar">
+      <span class="part-no">PART 02</span>
+      <span class="timeframe">file while still abroad</span>
+    </div>
+    <h2 class="kicker">Incentives</h2>
+    <h2 class="big">The Returning Expert Programme (REP)</h2>
+
+    <div class="card">
+      <h3>Who qualifies</h3>
+      <ul>
+        <li>Malaysian citizen, continuously employed abroad for at least 3 years at the time of application.</li>
+        <li>No Malaysian-sourced employment income for the 3 years leading up to the application.</li>
+        <li><strong>The application must be submitted while you're still resident and working abroad</strong> — this is the detail that catches people out. You cannot apply after you've already moved back.</li>
+        <li>No outstanding government scholarship or study loan bond.</li>
+      </ul>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>What it gets you</h3>
+        <ul>
+          <li>Optional flat 15% tax rate on employment income for five consecutive years, instead of the progressive scale.</li>
+          <li>Import duty exemption on one locally-assembled or imported car, up to RM150,000.</li>
+          <li>Tax exemption on personal effects brought back into the country.</li>
+          <li>Foreign spouse and children under 18 become eligible to apply for Permanent Resident (MyPR) status, and children can enrol in international schools.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>How it runs</h3>
+        <ol>
+          <li>Register a REP account and submit the online application with your CV, employment offer/confirmation, salary slips, tax returns, and certified academic certificates.</li>
+          <li>Processing takes roughly 45 working days, with the application tabled to the REP Committee.</li>
+          <li>Approval gives you a <strong>2-year window</strong> to actually make the move.</li>
+          <li>Once back, you provide further documents to receive a <em>Surat Akuan Tarikh Kembali</em> (SATK) — the document that unlocks the incentives.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="note">Tax treatment under REP has been refined more than once, including guidance specific to 2026 — confirm current eligibility detail and continuing-residence conditions with TalentCorp or LHDN directly before relying on it in your planning.</div>
+  </section>
+
+  <section class="section" id="jobs">
+    <div class="part-bar">
+      <span class="part-no">PART 03</span>
+      <span class="timeframe">overlap with registration</span>
+    </div>
+    <h2 class="kicker">Employment</h2>
+    <h2 class="big">Where the jobs actually are</h2>
+
+    <div class="card">
+      <h3>Public sector — Ministry of Health</h3>
+      <p>MOH has been actively working to convert contract Medical Officer positions into permanent posts, after years of a contract system created to absorb a surge of graduates. Demand for specialists remains real and uneven across the country.</p>
+      <ul>
+        <li>East Malaysia in particular — Sarawak especially — has been vocal about acute specialist shortages and is pushing for more direct recruitment pathways for returning and overseas-trained doctors. It's worth asking state health departments directly rather than relying only on national postings.</li>
+        <li>Specialist posts generally assume NSR registration is either complete or actively in progress; raise this directly with HR/JPA rather than assuming it disqualifies you while pending.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Private sector</h3>
+      <p>Private hospital groups need both full MMC registration and NSR specialist status before they can credential you as a consultant. Job boards (JobStreet, Indeed, Jora) carry general listings, but a meaningful share of specialist hiring at the larger groups happens through direct approach to their medical recruitment teams rather than public ads — worth reaching out even where nothing is listed.</p>
+      <div class="tag">Locum work</div><div class="tag">Private practice</div><div class="tag">Aesthetic medicine</div>
+      <p>These adjacent markets are visibly active in current listings if you want flexible or transitional income while your specialist registration clears.</p>
+    </div>
+
+    <div class="card">
+      <h3>Networking is not optional</h3>
+      <p>Specialty societies, the Academy of Medicine Malaysia, and informal alumni or returning-doctor networks tend to know which departments are genuinely short-staffed and which postings are formalities for someone already informally lined up. This is especially worth doing before you commit to the REP's two-year return window.</p>
+    </div>
+  </section>
+
+  <section class="section" id="family">
+    <div class="part-bar">
+      <span class="part-no">PART 04</span>
+      <span class="timeframe">6–9 months out</span>
+    </div>
+    <h2 class="kicker">Logistics</h2>
+    <h2 class="big">Family &amp; the rest of the move</h2>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Spouse &amp; children</h3>
+        <ul>
+          <li>If your spouse isn't Malaysian, the REP route is the cleanest path to MyPR status for them and for children under 18 — but it must be married before the REP application is submitted, and MyPR processing is at the discretion of Immigration and the National Registration Department.</li>
+          <li>International school eligibility comes attached to REP-linked PR status, but waitlists at the established international schools in KL, Penang and JB run long — start enquiries well before you have a firm move date.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Bringing your life back</h3>
+        <ul>
+          <li>Personal effects brought back are tax-exempt under REP — keep an inventory and receipts ready for the customs declaration.</li>
+          <li>One car (locally-assembled or imported) qualifies for duty exemption up to RM150,000 — decide early whether shipping your UK car or buying on return makes more financial sense.</li>
+          <li>Reactivate or open Malaysian bank accounts and check the status of any dormant EPF contributions from before you left.</li>
+          <li>UK driving licence conversion runs through JPJ — confirm current requirements directly, as reciprocal arrangements and required tests do change.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="touchdown">
+    <div class="part-bar">
+      <span class="part-no">PART 05</span>
+      <span class="timeframe">first 90 days</span>
+    </div>
+    <h2 class="kicker">Arrival</h2>
+    <h2 class="big">Touchdown</h2>
+    <div class="card">
+      <ul>
+        <li>Schedule your REP confirmation appointment with TalentCorp to get the SATK — nothing else under REP unlocks until this is issued.</li>
+        <li>Confirm your APC is active and reflects your new employer/practice location before your first clinical day.</li>
+        <li>If NSR registration is still pending, get written confirmation from your employer of your interim scope of practice.</li>
+        <li>Sort family registration steps — MyPR appointments, school enrolment, local GP/paediatrician for your own family.</li>
+        <li>Give yourself room to be a learner again for a few months: drug names, referral pathways, and documentation conventions differ enough from the NHS that it's worth assuming a short re-orientation period, not a seamless transition.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="checklist">
+    <div class="part-bar"><span class="part-no">TRACKER</span></div>
+    <h2 class="kicker">Your file</h2>
+    <h2 class="big">A working checklist</h2>
+    <div class="checklist-head">
+      <p style="margin:0; color:var(--ink-soft); font-size:14.5px; max-width:480px;">Tick things off as you go. Saved quietly to this browser — only you can see your progress.</p>
+      <div class="progress-pill"><b id="prog-num">0</b>/<span id="prog-total">0</span> stamped</div>
+    </div>
+
+    <div class="check-group" data-group="registration">
+      <h4>Registration</h4>
+      <label class="check-item" data-id="reg-epic"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Start EPIC or DataFlow credential verification</span></label>
+      <label class="check-item" data-id="reg-cgs"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Request GMC Certificate of Current Registration / Good Standing</span></label>
+      <label class="check-item" data-id="reg-apc"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Apply for / renew MMC Annual Practising Certificate</span></label>
+      <label class="check-item" data-id="reg-cpd"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Compile UK CPD / revalidation evidence for transfer</span></label>
+      <label class="check-item" data-id="reg-nsr"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Submit NSR specialist application with referee reports</span></label>
+    </div>
+
+    <div class="check-group" data-group="rep">
+      <h4>Returning Expert Programme</h4>
+      <label class="check-item" data-id="rep-account"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Register REP account (while still abroad)</span></label>
+      <label class="check-item" data-id="rep-docs"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Gather CV, offer letter, salary slips, tax returns, certified certificates</span></label>
+      <label class="check-item" data-id="rep-submit"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Submit REP application</span></label>
+      <label class="check-item" data-id="rep-satk"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Book SATK confirmation appointment after return</span></label>
+    </div>
+
+    <div class="check-group" data-group="jobs">
+      <h4>Job search</h4>
+      <label class="check-item" data-id="job-network"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Reach out to specialty society / AMM contacts</span></label>
+      <label class="check-item" data-id="job-public"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Contact MOH / state health department on specialist posts</span></label>
+      <label class="check-item" data-id="job-private"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Approach private hospital medical recruitment teams directly</span></label>
+    </div>
+
+    <div class="check-group" data-group="family">
+      <h4>Family &amp; logistics</h4>
+      <label class="check-item" data-id="fam-school"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Enquire at international/local schools, get on waitlists</span></label>
+      <label class="check-item" data-id="fam-pr"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Confirm MyPR documentation for spouse/children</span></label>
+      <label class="check-item" data-id="fam-bank"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Reactivate Malaysian bank account &amp; check EPF status</span></label>
+      <label class="check-item" data-id="fam-licence"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Check JPJ driving licence conversion requirements</span></label>
+      <label class="check-item" data-id="fam-shipping"><input type="checkbox"><span class="stamp-box"></span><span class="check-text">Decide on shipping car/belongings vs. buying fresh</span></label>
+    </div>
+  </section>
+
+  <section class="section" id="resources">
+    <div class="part-bar"><span class="part-no">OFFICIAL</span></div>
+    <h2 class="kicker">Go to the source</h2>
+    <h2 class="big">Verify everything here directly</h2>
+    <div class="res-grid">
+      <a class="res-card" href="https://mmc.gov.my" target="_blank" rel="noopener">
+        <span class="res-name">MMC — mmc.gov.my</span>
+        <span class="res-desc">Registration, APC, MeRITS portal, credential verification routes.</span>
+      </a>
+      <a class="res-card" href="https://www.nsr.org.my" target="_blank" rel="noopener">
+        <span class="res-name">NSR — nsr.org.my</span>
+        <span class="res-desc">Specialist registration, registrable qualifications by specialty, online application.</span>
+      </a>
+      <a class="res-card" href="https://www.talentcorp.com.my" target="_blank" rel="noopener">
+        <span class="res-name">TalentCorp — talentcorp.com.my</span>
+        <span class="res-desc">Returning Expert Programme application and current eligibility criteria.</span>
+      </a>
+      <a class="res-card" href="https://www.moh.gov.my" target="_blank" rel="noopener">
+        <span class="res-name">Ministry of Health — moh.gov.my</span>
+        <span class="res-desc">Public sector postings and policy updates on contract-to-permanent transitions.</span>
+      </a>
+      <a class="res-card" href="https://www.matchsync.com" target="_blank" rel="noopener">
+        <span class="res-name">MatchSync — matchsync.com</span>
+        <span class="res-desc">Founded by two UK-trained Malaysian doctors. Hands-on help with MMC/NSR registration, hospital job matching and REP support — a paid-membership alternative to doing it all yourself.</span>
+      </a>
+      <a class="res-card" href="https://www.facebook.com/dobbsforum/" target="_blank" rel="noopener">
+        <span class="res-name">Dobbs — Facebook forum</span>
+        <span class="res-desc">An open community for Malaysian doctors at home and abroad. Good for real-time, lived-experience answers rather than official guidance.</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p class="disclaimer">This guide reflects publicly available information as of June 2026 and is meant as an orientation, not legal or immigration advice — registration rules, REP criteria, and tax treatment have changed before and will again. Confirm specifics with MMC, NSR, TalentCorp, and LHDN directly, especially anything with a hard filing deadline.</p>
+    <p class="signoff">Compiled for the doctors still deciding, and the ones already packing.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var items = document.querySelectorAll('.check-item');
+  var progNum = document.getElementById('prog-num');
+  var progTotal = document.getElementById('prog-total');
+  progTotal.textContent = items.length;
+
+  function updateProgress(){
+    var checked = document.querySelectorAll('.check-item.checked').length;
+    progNum.textContent = checked;
+  }
+
+  function setChecked(el, state){
+    var input = el.querySelector('input');
+    input.checked = state;
+    el.classList.toggle('checked', state);
+  }
+
+  items.forEach(function(el){
+    var input = el.querySelector('input');
+    input.addEventListener('change', function(){
+      el.classList.toggle('checked', input.checked);
+      updateProgress();
+      saveState();
+    });
+  });
+
+  function saveState(){
+    try{
+      var state = {};
+      items.forEach(function(el){
+        state[el.getAttribute('data-id')] = el.classList.contains('checked');
+      });
+      window.localStorage.setItem('return-checklist', JSON.stringify(state));
+    }catch(e){ /* private browsing or storage disabled — non-fatal */ }
+  }
+
+  function loadState(){
+    try{
+      var raw = window.localStorage.getItem('return-checklist');
+      if(raw){
+        var state = JSON.parse(raw);
+        items.forEach(function(el){
+          var id = el.getAttribute('data-id');
+          if(state[id]){ setChecked(el, true); }
+        });
+      }
+    }catch(e){ /* no saved state yet, or storage disabled */ }
+  }
+
+  loadState();
+  updateProgress();
+})();
+</script>
+
+</body>
+</html>
